@@ -1,0 +1,14 @@
+# Copyright © Magento, Inc. All rights reserved.
+# See COPYING.txt for license details.
+
+type Mutation {
+    addItemToCart(
+        cartId: ID!, lineItems: [LineItemInput!]!
+    ): String
+    @doc(description:"Add any line items to cart")
+    @resolver(class: "Magento\\CheckoutGraphQlServer\\Resolver\\AddItemToCart")
+}
+
+input LineItemInput {
+    lineItemId: ID!
+}

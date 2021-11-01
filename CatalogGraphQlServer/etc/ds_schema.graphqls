@@ -1,0 +1,163 @@
+# Copyright © Magento, Inc. All rights reserved.
+# See COPYING.txt for license details.
+
+
+enum Currency {
+    USD
+}
+
+type Money {
+    amount: Float
+    currency: Currency
+}
+
+input MoneyInput {
+    amount: Float
+    currency: Currency
+}
+
+enum ProductImageRole {
+    SMALL
+    REGULAR
+    THUMBNAIL
+    SWATCH
+}
+
+enum ProductAttributeRole {
+    DISPLAY_AT_PDP
+    DISPLAY_AT_PLP
+    DISPLAY_AT_SEARCH
+}
+
+enum ProductRole {
+    CAN_BE_ADDED_TO_CART
+    CAN_SHOW_PRICE
+    IS_NEW_PRODUCT
+}
+
+input MediaResourceInput {
+    url: String!
+    label: String
+}
+
+type MediaResource {
+    url: String!
+    label: String
+}
+
+
+type ProductImage {
+    resource: MediaResource
+    roles: [ProductImageRole]
+}
+
+type ProductAttribute {
+    name: String!
+    values: JSON
+    roles: [ProductAttributeRole]
+}
+
+type ProductPrice {
+    regular: Money!
+    final: Money!
+}
+
+type ProductPriceRange {
+    minimum: ProductPrice!
+    maximum: ProductPrice
+}
+
+interface Product
+    @typeResolver(class: "Magento\\CatalogGraphQlServer\\Resolver\\ProductTypeResolver")
+    @doc(description:"Product interface type resolver")
+{
+    id: ID!
+    name: String
+    url: String
+    description: String
+    shortDescription: String
+    metaDescription: String
+    metaKeyword: String
+    metaTitle: String
+    roles: [ProductRole]
+    images(roles: [ProductImageRole]): [ProductImage]
+    attributes(roles: [ProductAttributeRole]): [ProductAttribute]
+}
+
+type SimpleProduct implements Product {
+    id: ID!
+    name: String
+    url: String
+    description: String
+    shortDescription: String
+    metaDescription: String
+    metaKeyword: String
+    metaTitle: String
+    roles: [ProductRole]
+    images(roles: [ProductImageRole]): [ProductImage]
+    attributes(roles: [ProductAttributeRole]): [ProductAttribute]
+    price: ProductPrice
+}
+
+type ProductOption {
+    id: ID
+    required: Boolean
+    multi: Boolean
+    title: String
+    values: [ProductOptionValue!]
+}
+
+interface ProductOptionValue
+@typeResolver(class: "Magento\\CatalogGraphQlServer\\Resolver\\ProductOptionValueTypeResolver")
+@doc(description:"Product option value interface type resolver")
+{
+    id: ID
+    title: String
+}
+
+type BundleOptionValue implements ProductOptionValue {
+    id: ID
+    title: String
+    product: SimpleProduct
+}
+
+type ConfigurableOptionValue implements ProductOptionValue {
+    id: ID
+    title: String
+}
+
+type ProductOptionSelection {
+    productOptionId: ID
+    productOptionValueId: ID
+}
+
+input ProductOptionSelectionInput {
+    productOptionId: ID
+    productOptionValueId: ID
+}
+
+type ProductVariant {
+    selections: [ProductOptionSelection]
+    product: SimpleProduct
+}
+
+type ComplexProduct implements Product {
+    id: ID!
+    name: String
+    url: String
+    description: String
+    shortDescription: String
+    metaDescription: String
+    metaKeyword: String
+    metaTitle: String
+    roles: [ProductRole]
+    images(roles: [ProductImageRole]): [ProductImage]
+    attributes(roles: [ProductAttributeRole]): [ProductAttribute]
+    priceRange: ProductPriceRange
+    options(selections: [ProductOptionSelectionInput]): [ProductOption]
+    variants(selections: [ProductOptionSelectionInput!]!): [ProductVariant]
+}
+
+type Query {
+    getProductById(ids: [ID]) : [Product]
+}
