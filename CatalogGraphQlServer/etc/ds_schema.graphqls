@@ -1,21 +1,6 @@
 # Copyright © Magento, Inc. All rights reserved.
 # See COPYING.txt for license details.
 
-
-enum Currency {
-    USD
-}
-
-type Money {
-    amount: Float
-    currency: Currency
-}
-
-input MoneyInput {
-    amount: Float
-    currency: Currency
-}
-
 enum ProductImageRole {
     SMALL
     REGULAR
@@ -40,11 +25,6 @@ input MediaResourceInput {
     label: String
 }
 
-type MediaResource {
-    url: String!
-    label: String
-}
-
 
 type ProductImage {
     resource: MediaResource
@@ -53,7 +33,7 @@ type ProductImage {
 
 type ProductAttribute {
     name: String!
-    values: JSON
+    value: Json
     roles: [ProductAttributeRole]
 }
 
@@ -108,8 +88,8 @@ type ProductOption {
 }
 
 interface ProductOptionValue
-@typeResolver(class: "Magento\\CatalogGraphQlServer\\Resolver\\ProductOptionValueTypeResolver")
-@doc(description:"Product option value interface type resolver")
+    @typeResolver(class: "Magento\\CatalogGraphQlServer\\Resolver\\ProductOptionValueTypeResolver")
+    @doc(description:"Product option value interface type resolver")
 {
     id: ID
     title: String
@@ -160,4 +140,7 @@ type ComplexProduct implements Product {
 
 type Query {
     getProductById(ids: [ID]) : [Product]
+    @resolver(class: "Magento\\CatalogGraphQlServer\\Resolver\\ProductResolver")
+    @doc(description:"Products test query")
+
 }

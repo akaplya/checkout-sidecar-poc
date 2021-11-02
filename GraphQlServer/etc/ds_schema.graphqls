@@ -1,15 +1,9 @@
 # Copyright © Magento, Inc. All rights reserved.
 # See COPYING.txt for license details.
 
-scalar JSON
-
-type Query {
-    test: String
-}
-
-type Mutation {
-    test: String
-}
+scalar Json
+@def(class: "Magento\\GraphQlServer\\Type\\Scalar\\JsonScalarType")
+@doc(description:"Json type")
 
 enum Currency {
     USD
@@ -23,4 +17,17 @@ type Money {
 input MoneyInput {
     amount: Float
     currency: Currency
+}
+
+type MediaResource {
+    url: String!
+    label: String
+}
+
+type Query {
+    test: String
+}
+
+type Mutation {
+    test: String
 }

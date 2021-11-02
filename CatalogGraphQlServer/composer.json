@@ -6,8 +6,7 @@
         "php": "~7.3.0||~7.4.0",
         "magento/framework": "*",
         "magento/module-graph-ql-server": "*",
-        "magento/module-catalog": "*",
-        "magento/module-catalog-service": "*"
+        "magento/module-catalog": "*"
     },
     "license": [
         "OSL-3.0",

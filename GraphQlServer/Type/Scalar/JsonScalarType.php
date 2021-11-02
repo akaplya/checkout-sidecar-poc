@@ -9,12 +9,12 @@ namespace Magento\GraphQlServer\Type\Scalar;
 
 use GraphQL\Type\Definition\ScalarType;
 
-class JsonScalarType extends ScalarType
+class JsonScalarType
 {
 
-    public $name = 'JSON';
+//    public $name = 'Json';
 
-    public function serialize($value)
+    public static function serialize($value)
     {
         $result = json_encode($value);
         if (false === $result) {
@@ -23,12 +23,12 @@ class JsonScalarType extends ScalarType
         return $result;
     }
 
-    public function parseValue($value)
+    public static function parseValue($value)
     {
-        return $this->serialize($value);
+        return self::serialize($value);
     }
 
-    public function parseLiteral($valueNode, ?array $variables = null)
+    public static function parseLiteral($valueNode, ?array $variables = null)
     {
         return $valueNode->value;
     }

@@ -18,6 +18,7 @@ use Magento\Framework\GraphQl\Query\Fields as QueryFields;
 use Magento\Framework\GraphQl\Query\QueryProcessor;
 use Magento\Framework\GraphQl\Schema\SchemaGeneratorInterface;
 use Magento\Framework\Serialize\SerializerInterface;
+use Magento\GraphQlServer\Model\Context\ContextFactory;
 
 /**
  * Graphql front controller
@@ -61,13 +62,19 @@ class Gateway implements FrontControllerInterface
     private $httpResponse;
 
     /**
+     * @var ContextFactory
+     */
+    private $contextFactory;
+
+    /**
      * @param SchemaGeneratorInterface $schemaGenerator
      * @param SerializerInterface $jsonSerializer
      * @param QueryProcessor $queryProcessor
      * @param ExceptionFormatter $graphQlError
      * @param QueryFields $queryFields
-     * @param JsonFactory|null $jsonFactory
-     * @param HttpResponse|null $httpResponse
+     * @param JsonFactory $jsonFactory
+     * @param HttpResponse $httpResponse
+     * @param ContextFactory $contextFactory
      */
     public function __construct(
         SchemaGeneratorInterface $schemaGenerator,
@@ -76,7 +83,8 @@ class Gateway implements FrontControllerInterface
         ExceptionFormatter $graphQlError,
         QueryFields $queryFields,
         JsonFactory $jsonFactory,
-        HttpResponse $httpResponse
+        HttpResponse $httpResponse,
+        ContextFactory $contextFactory
     ) {
         $this->schemaGenerator = $schemaGenerator;
         $this->jsonSerializer = $jsonSerializer;
@@ -85,6 +93,7 @@ class Gateway implements FrontControllerInterface
         $this->queryFields = $queryFields;
         $this->jsonFactory = $jsonFactory;
         $this->httpResponse = $httpResponse;
+        $this->contextFactory = $contextFactory;
     }
 
     /**
@@ -98,6 +107,12 @@ class Gateway implements FrontControllerInterface
         $jsonResult = $this->jsonFactory->create();
         $data = $this->getDataFromRequest($request);
         $result = [];
+//        \GraphQL\Type\Definition\Type::overrideStandardTypes(
+//            [
+//                'JSON' => new \Magento\GraphQlServer\Type\Scalar\JsonScalarType()
+//            ]
+//        );
+
         try {
             $query = $data['query'] ?? '';
             $variables = $data['variables'] ?? null;
@@ -107,7 +122,7 @@ class Gateway implements FrontControllerInterface
             $result = $this->queryProcessor->process(
                 $schema,
                 $query,
-                null, // <--- put context object here
+                $this->contextFactory->create(),
                 $data['variables'] ?? []
             );
         } catch (\Exception $error) {
