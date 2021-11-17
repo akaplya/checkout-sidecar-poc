@@ -25,16 +25,16 @@ class Scalar implements ConfigElementInterface
     /**
      * @var string
      */
-    private $definition;
+    private $implementation;
 
     public function __construct(
         string $name,
         string $description,
-        string $definition
+        string $implementation
     ) {
         $this->name = $name;
         $this->description = $description;
-        $this->definition = $definition;
+        $this->implementation = $implementation;
     }
 
     public function getName(): string
@@ -50,8 +50,8 @@ class Scalar implements ConfigElementInterface
     /**
      * @return string
      */
-    public function getDefinition(): string
+    public function getImplementation(): string
     {
-        return $this->definition;
+        return $this->implementation;
     }
 }

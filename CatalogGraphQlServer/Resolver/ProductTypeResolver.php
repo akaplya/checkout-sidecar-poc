@@ -12,12 +12,17 @@ use Magento\Framework\GraphQl\Query\Resolver\TypeResolverInterface;
 
 class ProductTypeResolver implements TypeResolverInterface
 {
+    private $complexTypes = ['configurable', 'bundle'];
     /**
      * @param array $data
      * @return string
      */
     public function resolveType(array $data): string
     {
-        return 'SimpleProduct';
+        $type = 'SimpleProduct';
+        if (in_array($data['raw']['type'], $this->complexTypes)) {
+            $type = 'ComplexProduct';
+        }
+        return $type;
     }
 }

@@ -42,7 +42,7 @@ class ScalarFactory implements ConfigElementFactoryInterface
             [
                 'name' => $data['name'],
                 'description' => $data['description'] ?? $data['name'],
-                'definition' => $data['definition']
+                'implementation' => $data['implementation']
             ]
         );
     }

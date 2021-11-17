@@ -1,9 +1,53 @@
 # Copyright © Magento, Inc. All rights reserved.
 # See COPYING.txt for license details.
 
+
+directive @doc(description: String="") on QUERY
+    | MUTATION
+    | FIELD
+    | FRAGMENT_DEFINITION
+    | FRAGMENT_SPREAD
+    | INLINE_FRAGMENT
+    | SCHEMA
+    | SCALAR
+    | OBJECT
+    | FIELD_DEFINITION
+    | ARGUMENT_DEFINITION
+    | INTERFACE
+    | UNION
+    | ENUM
+    | ENUM_VALUE
+    | INPUT_OBJECT
+    | INPUT_FIELD_DEFINITION
+
+directive @resolver(class: String="") on QUERY
+    | MUTATION
+    | FIELD
+    | FRAGMENT_DEFINITION
+    | FRAGMENT_SPREAD
+    | INLINE_FRAGMENT
+    | SCHEMA
+    | SCALAR
+    | OBJECT
+    | FIELD_DEFINITION
+    | ARGUMENT_DEFINITION
+    | ENUM
+    | ENUM_VALUE
+    | INPUT_OBJECT
+    | INPUT_FIELD_DEFINITION
+
+directive @typeResolver(class: String="") on UNION
+    | INTERFACE
+    | OBJECT
+
+directive @implementation(class: String="") on SCALAR
+    | OBJECT
+
+
 scalar Json
-@def(class: "Magento\\GraphQlServer\\Type\\Scalar\\JsonScalarType")
+@implementation(class: "Magento\\GraphQlServer\\Type\\Scalar\\JsonScalarType")
 @doc(description:"Json type")
+{}
 
 enum Currency {
     USD

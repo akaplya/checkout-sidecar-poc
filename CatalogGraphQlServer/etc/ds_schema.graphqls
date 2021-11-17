@@ -61,22 +61,14 @@ interface Product
     metaTitle: String
     roles: [ProductRole]
     images(roles: [ProductImageRole]): [ProductImage]
+        @resolver(class: "Magento\\CatalogGraphQlServer\\Resolver\\ProductImageResolver")
     attributes(roles: [ProductAttributeRole]): [ProductAttribute]
+        @resolver(class: "Magento\\CatalogGraphQlServer\\Resolver\\ProductAttributeResolver")
 }
 
 type SimpleProduct implements Product {
-    id: ID!
-    name: String
-    url: String
-    description: String
-    shortDescription: String
-    metaDescription: String
-    metaKeyword: String
-    metaTitle: String
-    roles: [ProductRole]
-    images(roles: [ProductImageRole]): [ProductImage]
-    attributes(roles: [ProductAttributeRole]): [ProductAttribute]
     price: ProductPrice
+        @resolver(class: "Magento\\CatalogGraphQlServer\\Resolver\\SimpleProductPriceResolver")
 }
 
 type ProductOption {
@@ -122,18 +114,8 @@ type ProductVariant {
 }
 
 type ComplexProduct implements Product {
-    id: ID!
-    name: String
-    url: String
-    description: String
-    shortDescription: String
-    metaDescription: String
-    metaKeyword: String
-    metaTitle: String
-    roles: [ProductRole]
-    images(roles: [ProductImageRole]): [ProductImage]
-    attributes(roles: [ProductAttributeRole]): [ProductAttribute]
     priceRange: ProductPriceRange
+        @resolver(class: "Magento\\CatalogGraphQlServer\\Resolver\\ComplexProductPriceResolver")
     options(selections: [ProductOptionSelectionInput]): [ProductOption]
     variants(selections: [ProductOptionSelectionInput!]!): [ProductVariant]
 }
@@ -142,5 +124,4 @@ type Query {
     getProductById(ids: [ID]) : [Product]
     @resolver(class: "Magento\\CatalogGraphQlServer\\Resolver\\ProductResolver")
     @doc(description:"Products test query")
-
 }

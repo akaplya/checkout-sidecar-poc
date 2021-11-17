@@ -23,6 +23,7 @@ class ProductResolver implements ResolverInterface
      * @var ResourceConnection
      */
     private $resourceConnection;
+
     /**
      * @var Json
      */
@@ -53,6 +54,14 @@ class ProductResolver implements ResolverInterface
         return $this->resolveProducts($args, $context);
     }
 
+    private function copyFields(array $data, array $fields): array
+    {
+        foreach ($fields as $alias => $field) {
+            $data[is_string($alias) ? $alias : $field] = $data['raw'][$field];
+        }
+        return $data;
+    }
+
     private function resolveProducts(array $arguments, Context $context)
     {
         $connection = $this->resourceConnection->getConnection();
@@ -66,34 +75,18 @@ class ProductResolver implements ResolverInterface
         $output = [];
         $cursor = $connection->query($select);
         while ($row = $cursor->fetch()) {
-            $output[] = $this->format($row['feed_data']);
+            $data['raw'] = $this->jsonSerializer->unserialize($row['feed_data']);
+                $data = $this->copyFields(
+                    $data,
+                    [
+                        'id' => 'productId',
+                        'name',
+                        'description',
+                        'shortDescription'
+                    ]
+                );
+            $output[] = $data;
         }
         return $output;
-    }
-
-    private function format(string $json): array
-    {
-        $data = $this->jsonSerializer->unserialize($json);
-        $entry = [
-            'id' => $data['productId'],
-            'name' => $data['name'],
-            'description' => $data['description'],
-            'shortDescription' => $data['shortDescription']
-        ];
-        foreach ($data['attributes'] as $attribute) {
-            $attributeCode = $attribute['attributeCode'];
-            if (count($attribute['value']) == 1) {
-                $attributeValue = $attribute['value'][0];
-            } else {
-                $attributeValue = $attribute['value'];
-            }
-
-            $entry['attributes'][] = [
-                'name' => $attributeCode,
-                'value' => $attributeValue
-            ];
-        }
-
-        return $entry;
     }
 }

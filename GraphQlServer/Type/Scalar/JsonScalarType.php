@@ -7,28 +7,22 @@ declare(strict_types=1);
 
 namespace Magento\GraphQlServer\Type\Scalar;
 
-use GraphQL\Type\Definition\ScalarType;
+use Magento\GraphQlServer\GraphQl\Schema\Type\Scalar\CustomScalarInterface;
 
-class JsonScalarType
+class JsonScalarType implements CustomScalarInterface
 {
 
-//    public $name = 'Json';
-
-    public static function serialize($value)
+    public function serialize($value)
     {
-        $result = json_encode($value);
-        if (false === $result) {
-            throw new \InvalidArgumentException("Unable to serialize value. Error: " . json_last_error_msg());
-        }
-        return $result;
+        return json_decode($value);
     }
 
-    public static function parseValue($value)
+    public function parseValue($value)
     {
-        return self::serialize($value);
+        return json_encode($value);
     }
 
-    public static function parseLiteral($valueNode, ?array $variables = null)
+    public function parseLiteral($valueNode, ?array $variables = null)
     {
         return $valueNode->value;
     }
