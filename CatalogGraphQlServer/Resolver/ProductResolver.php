@@ -57,7 +57,7 @@ class ProductResolver implements ResolverInterface
     private function copyFields(array $data, array $fields): array
     {
         foreach ($fields as $alias => $field) {
-            $data[is_string($alias) ? $alias : $field] = $data['raw'][$field];
+            $data[is_string($alias) ? $alias : $field] = $data['raw'][$field] ?? null;
         }
         return $data;
     }

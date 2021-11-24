@@ -49,6 +49,11 @@ scalar Json
 @doc(description:"Json type")
 {}
 
+scalar Html
+@implementation(class: "Magento\\GraphQlServer\\Type\\Scalar\\HtmlScalarType")
+@doc(description:"Json type")
+{}
+
 enum Currency {
     USD
 }
@@ -63,7 +68,7 @@ input MoneyInput {
     currency: Currency
 }
 
-type MediaResource {
+interface MediaResource {
     url: String!
     label: String
 }
