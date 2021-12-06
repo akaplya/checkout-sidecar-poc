@@ -68,7 +68,7 @@ input MoneyInput {
     currency: Currency
 }
 
-interface MediaResource {
+type MediaResource {
     url: String!
     label: String
 }

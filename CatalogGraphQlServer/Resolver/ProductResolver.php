@@ -13,16 +13,16 @@ use Magento\Framework\GraphQl\Query\Resolver\Value;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQlServer\Model\Context\Context;
-use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\CatalogGraphQlServer\Model\Context\StoreViewContextValue;
+use Magento\CatalogGraphQlServer\Model\ProductDataProvider;
 
 class ProductResolver implements ResolverInterface
 {
     /**
-     * @var ResourceConnection
+     * @var ProductDataProvider
      */
-    private $resourceConnection;
+    private $productDataProvider;
 
     /**
      * @var Json
@@ -30,14 +30,13 @@ class ProductResolver implements ResolverInterface
     private $jsonSerializer;
 
     /**
-     * @param ResourceConnection $resourceConnection
      * @param Json $jsonSerializer
      */
     public function __construct(
-        ResourceConnection $resourceConnection,
+        ProductDataProvider $productDataProvider,
         Json $jsonSerializer
     ) {
-        $this->resourceConnection = $resourceConnection;
+        $this->productDataProvider = $productDataProvider;
         $this->jsonSerializer = $jsonSerializer;
     }
 
@@ -64,27 +63,21 @@ class ProductResolver implements ResolverInterface
 
     private function resolveProducts(array $arguments, Context $context)
     {
-        $connection = $this->resourceConnection->getConnection();
-        $select = $connection->select()
-            ->from(
-                ['t' => $this->resourceConnection->getTableName('catalog_data_exporter_products')],
-                ['t.feed_data']
-            )
-            ->where('t.id IN (?)', $arguments['ids'])
-            ->where('t.store_view_code = ?', $context->getValue(StoreViewContextValue::STORE_VIEW_CONTEXT));
-        $output = [];
-        $cursor = $connection->query($select);
-        while ($row = $cursor->fetch()) {
+        foreach (
+            $this->productDataProvider->getProducts(
+                $arguments['ids'],
+                $context->getValue(StoreViewContextValue::STORE_VIEW_CONTEXT)
+            ) as $row) {
             $data['raw'] = $this->jsonSerializer->unserialize($row['feed_data']);
-                $data = $this->copyFields(
-                    $data,
-                    [
-                        'id' => 'productId',
-                        'name',
-                        'description',
-                        'shortDescription'
-                    ]
-                );
+            $data = $this->copyFields(
+                $data,
+                [
+                    'id' => 'productId',
+                    'name',
+                    'description',
+                    'shortDescription'
+                ]
+            );
             $output[] = $data;
         }
         return $output;

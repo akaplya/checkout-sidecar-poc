@@ -14,11 +14,8 @@ use Magento\Framework\App\Response\Http as HttpResponse;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\GraphQl\Exception\ExceptionFormatter;
-use Magento\Framework\GraphQl\Query\Fields as QueryFields;
-use Magento\Framework\GraphQl\Query\QueryProcessor;
-use Magento\Framework\GraphQl\Schema\SchemaGeneratorInterface;
 use Magento\Framework\Serialize\SerializerInterface;
-use Magento\GraphQlServer\Model\Context\ContextFactory;
+use Magento\GraphQlServer\Model\Server;
 
 /**
  * Graphql front controller
@@ -27,29 +24,14 @@ class Gateway implements FrontControllerInterface
 {
 
     /**
-     * @var SchemaGeneratorInterface
-     */
-    private $schemaGenerator;
-
-    /**
      * @var SerializerInterface
      */
     private $jsonSerializer;
 
     /**
-     * @var QueryProcessor
-     */
-    private $queryProcessor;
-
-    /**
      * @var ExceptionFormatter
      */
     private $graphQlError;
-
-    /**
-     * @var QueryFields
-     */
-    private $queryFields;
 
     /**
      * @var JsonFactory
@@ -62,38 +44,29 @@ class Gateway implements FrontControllerInterface
     private $httpResponse;
 
     /**
-     * @var ContextFactory
+     * @var Server
      */
-    private $contextFactory;
+    private $server;
 
     /**
-     * @param SchemaGeneratorInterface $schemaGenerator
      * @param SerializerInterface $jsonSerializer
-     * @param QueryProcessor $queryProcessor
      * @param ExceptionFormatter $graphQlError
-     * @param QueryFields $queryFields
      * @param JsonFactory $jsonFactory
      * @param HttpResponse $httpResponse
-     * @param ContextFactory $contextFactory
+     * @param Server $server
      */
     public function __construct(
-        SchemaGeneratorInterface $schemaGenerator,
         SerializerInterface $jsonSerializer,
-        QueryProcessor $queryProcessor,
         ExceptionFormatter $graphQlError,
-        QueryFields $queryFields,
         JsonFactory $jsonFactory,
         HttpResponse $httpResponse,
-        ContextFactory $contextFactory
+        Server $server
     ) {
-        $this->schemaGenerator = $schemaGenerator;
         $this->jsonSerializer = $jsonSerializer;
-        $this->queryProcessor = $queryProcessor;
         $this->graphQlError = $graphQlError;
-        $this->queryFields = $queryFields;
         $this->jsonFactory = $jsonFactory;
         $this->httpResponse = $httpResponse;
-        $this->contextFactory = $contextFactory;
+        $this->server = $server;
     }
 
     /**
@@ -107,24 +80,10 @@ class Gateway implements FrontControllerInterface
         $jsonResult = $this->jsonFactory->create();
         $data = $this->getDataFromRequest($request);
         $result = [];
-//        \GraphQL\Type\Definition\Type::overrideStandardTypes(
-//            [
-//                'JSON' => new \Magento\GraphQlServer\Type\Scalar\JsonScalarType()
-//            ]
-//        );
-
         try {
             $query = $data['query'] ?? '';
             $variables = $data['variables'] ?? null;
-            $this->queryFields->setQuery($query, $variables);
-            $schema = $this->schemaGenerator->generate();
-
-            $result = $this->queryProcessor->process(
-                $schema,
-                $query,
-                $this->contextFactory->create(),
-                $data['variables'] ?? []
-            );
+            $result = $this->server->execute($query, $variables);
         } catch (\Exception $error) {
             $result['errors'] = isset($result['errors']) ? $result['errors'] : [];
             $result['errors'][] = $this->graphQlError->create($error);
