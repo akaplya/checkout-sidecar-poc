@@ -19,9 +19,9 @@ class ProductTypeResolver implements TypeResolverInterface
      */
     public function resolveType(array $data): string
     {
-        $type = 'SimpleProduct';
+        $type = 'SimpleProductV2';
         if (in_array($data['raw']['type'], $this->complexTypes)) {
-            $type = 'ComplexProduct';
+            $type = 'ComplexProductV2';
         }
         return $type;
     }

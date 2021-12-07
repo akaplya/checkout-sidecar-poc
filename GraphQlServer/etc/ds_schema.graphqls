@@ -54,21 +54,16 @@ scalar Html
 @doc(description:"Json type")
 {}
 
-enum Currency {
+enum CurrencyV2 {
     USD
 }
 
-type Money {
+type MoneyV2 {
     amount: Float
-    currency: Currency
+    currency: CurrencyV2
 }
 
-input MoneyInput {
-    amount: Float
-    currency: Currency
-}
-
-type MediaResource {
+type MediaResourceV2 {
     url: String!
     label: String
 }

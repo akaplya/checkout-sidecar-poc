@@ -1,53 +1,53 @@
 # Copyright © Magento, Inc. All rights reserved.
 # See COPYING.txt for license details.
 
-enum ProductImageRole {
+enum ProductImageRoleV2 {
     SMALL
     REGULAR
     THUMBNAIL
     SWATCH
 }
 
-enum ProductAttributeRole {
+enum ProductAttributeRoleV2 {
     DISPLAY_AT_PDP
     DISPLAY_AT_PLP
     DISPLAY_AT_SEARCH
 }
 
-enum ProductRole {
+enum ProductRoleV2 {
     CAN_BE_ADDED_TO_CART
     CAN_SHOW_PRICE
     IS_NEW_PRODUCT
 }
 
-input MediaResourceInput {
+input MediaResourceInputV2 {
     url: String!
     label: String
 }
 
 
-type ProductImage {
-    resource: MediaResource
-    roles: [ProductImageRole]
+type ProductImageV2 {
+    resource: MediaResourceV2
+    roles: [ProductImageRoleV2]
 }
 
-type ProductAttribute {
+type ProductAttributeV2 {
     name: String!
     value: Json
-    roles: [ProductAttributeRole]
+    roles: [ProductAttributeRoleV2]
 }
 
-type ProductPrice {
-    regular: Money!
-    final: Money!
+type ProductPriceV2 {
+    regular: MoneyV2!
+    final: MoneyV2!
 }
 
-type ProductPriceRange {
-    minimum: ProductPrice!
-    maximum: ProductPrice
+type ProductPriceRangeV2 {
+    minimum: ProductPriceV2!
+    maximum: ProductPriceV2
 }
 
-interface Product
+interface ProductV2
     @typeResolver(class: "Magento\\CatalogGraphQlServer\\Resolver\\ProductTypeResolver")
     @doc(description:"Product interface type resolver")
 {
@@ -59,27 +59,27 @@ interface Product
     metaDescription: String
     metaKeyword: String
     metaTitle: String
-    roles: [ProductRole]
-    images(roles: [ProductImageRole]): [ProductImage]
+    roles: [ProductRoleV2]
+    images(roles: [ProductImageRoleV2]): [ProductImageV2]
         @resolver(class: "Magento\\CatalogGraphQlServer\\Resolver\\ProductImageResolver")
-    attributes(roles: [ProductAttributeRole]): [ProductAttribute]
+    attributes(roles: [ProductAttributeRoleV2]): [ProductAttributeV2]
         @resolver(class: "Magento\\CatalogGraphQlServer\\Resolver\\ProductAttributeResolver")
 }
 
-type SimpleProduct implements Product {
-    price: ProductPrice
+type SimpleProductV2 implements ProductV2 {
+    price: ProductPriceV2
         @resolver(class: "Magento\\CatalogGraphQlServer\\Resolver\\SimpleProductPriceResolver")
 }
 
-type ProductOption {
+type ProductOptionV2 {
     id: ID
     required: Boolean
     multi: Boolean
     title: String
-    values: [ProductOptionValue!]
+    values: [ProductOptionValueV2!]
 }
 
-interface ProductOptionValue
+interface ProductOptionValueV2
     @typeResolver(class: "Magento\\CatalogGraphQlServer\\Resolver\\ProductOptionValueTypeResolver")
     @doc(description:"Product option value interface type resolver")
 {
@@ -87,41 +87,41 @@ interface ProductOptionValue
     title: String
 }
 
-type BundleOptionValue implements ProductOptionValue {
+type BundleOptionValueV2 implements ProductOptionValueV2 {
     id: ID
     title: String
-    product: SimpleProduct
+    product: SimpleProductV2
 }
 
-type ConfigurableOptionValue implements ProductOptionValue {
+type ConfigurableOptionValueV2 implements ProductOptionValueV2 {
     id: ID
     title: String
 }
 
-type ProductOptionSelection {
+type ProductOptionSelectionV2 {
     productOptionId: ID
     productOptionValueId: ID
 }
 
-input ProductOptionSelectionInput {
+input ProductOptionSelectionInputV2 {
     productOptionId: ID
     productOptionValueId: ID
 }
 
-type ProductVariant {
-    selections: [ProductOptionSelection]
-    product: SimpleProduct
+type ProductVariantV2 {
+    selections: [ProductOptionSelectionV2]
+    product: SimpleProductV2
 }
 
-type ComplexProduct implements Product {
-    priceRange: ProductPriceRange
+type ComplexProductV2 implements ProductV2 {
+    priceRange: ProductPriceRangeV2
         @resolver(class: "Magento\\CatalogGraphQlServer\\Resolver\\ComplexProductPriceResolver")
-    options(selections: [ProductOptionSelectionInput]): [ProductOption]
-    variants(selections: [ProductOptionSelectionInput!]!): [ProductVariant]
+    options(selections: [ProductOptionSelectionInputV2]): [ProductOptionV2]
+    variants(selections: [ProductOptionSelectionInputV2!]!): [ProductVariantV2]
 }
 
 type Query {
-    getProductById(ids: [ID]) : [Product]
+    getProductById(ids: [ID]) : [ProductV2]
     @resolver(class: "Magento\\CatalogGraphQlServer\\Resolver\\ProductResolver")
     @doc(description:"Products test query")
 }
