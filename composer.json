@@ -1,0 +1,40 @@
+{
+  "name": "garage-week/checkout-sidecar-poc",
+  "description": "Headless Composable Checkout API",
+  "type": "project",
+  "repositories": {
+    "repo" : {
+      "url": "https://repo.magento.com",
+      "type": "composer"
+    },
+    "graphqlServer": {
+        "type": "path",
+        "url": "./GraphQlServer"
+    },
+    "catalogGraphqlServer": {
+          "type": "path",
+          "url": "./CatalogGraphQlServer"
+    }
+  },
+    "autoload": {
+        "psr-4": {
+            "Magento\\Setup\\": "setup/src/Magento/Setup/"
+        },
+        "psr-0": {
+            "": [
+                "generated/code/"
+            ]
+        },
+        "exclude-from-classmap": [
+            "**/dev/**",
+            "**/update/**",
+            "**/Test/**"
+        ]
+    },
+  "require": {
+    "magento/product-community-edition": "2.4.3",
+    "magento/commerce-data-export": "101.*",
+    "magento/module-graph-ql-server": "dev-develop",
+    "magento/module-catalog-graph-ql-server": "dev-develop"
+  }
+}

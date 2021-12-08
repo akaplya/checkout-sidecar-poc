@@ -6,8 +6,7 @@
         "php": "~7.4.0||~8.0.0",
         "magento/framework": "*",
         "magento/module-webapi": "*",
-        "magento/module-graph-ql": "*",
-        "webonyx/graphql-php": "~14.9.0"
+        "magento/module-graph-ql": "*"
     },
     "license": [
         "OSL-3.0",
