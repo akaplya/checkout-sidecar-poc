@@ -117,6 +117,7 @@ type ComplexProductV2 implements ProductV2 {
     priceRange: ProductPriceRangeV2
         @resolver(class: "Magento\\CatalogGraphQlServer\\Resolver\\ComplexProductPriceResolver")
     options(selections: [ProductOptionSelectionInputV2]): [ProductOptionV2]
+        @resolver(class: "Magento\\CatalogGraphQlServer\\Resolver\\ComplexProductOptionsResolver")
     variants(selections: [ProductOptionSelectionInputV2!]!): [ProductVariantV2]
 }
 
