@@ -18,6 +18,6 @@ class ProductOptionValueTypeResolver implements TypeResolverInterface
      */
     public function resolveType(array $data): string
     {
-        return 'ConfigurableOptionValue';
+        return 'ConfigurableOptionValueV2';
     }
 }
