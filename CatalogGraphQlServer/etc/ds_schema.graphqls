@@ -119,6 +119,7 @@ type ComplexProductV2 implements ProductV2 {
     options(selections: [ProductOptionSelectionInputV2]): [ProductOptionV2]
         @resolver(class: "Magento\\CatalogGraphQlServer\\Resolver\\ComplexProductOptionsResolver")
     variants(selections: [ProductOptionSelectionInputV2!]!): [ProductVariantV2]
+        @resolver(class: "Magento\\CatalogGraphQlServer\\Resolver\\ComplexProductVariantsResolver")
 }
 
 type Query {
