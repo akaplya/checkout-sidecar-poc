@@ -44,15 +44,22 @@ class ProductImageResolver implements ResolverInterface
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
         $images = [];
+        $filterRoles = [];
+        if (!empty($args['roles'])) {
+            $filterRoles = $args['roles'];
+        }
         $rawImages = $value['raw']['images'] ?? [];
         foreach ($rawImages as $image) {
-            $images[] = [
-                'resource' => [
-                    'url' => $image['resource']['url'],
-                    'label' => $image['resource']['label']
-                ],
-                'roles' => $this->formatRoles($image['resource']['roles'] ?? [])
-            ];
+            $roles = $this->formatRoles($image['resource']['roles'] ?? []);
+            if (empty($filterRoles) || array_intersect($filterRoles, $roles)) {
+                $images[] = [
+                    'resource' => [
+                        'url' => $image['resource']['url'],
+                        'label' => $image['resource']['label']
+                    ],
+                    'roles' => $roles
+                ];
+            }
         }
         return $images;
     }
