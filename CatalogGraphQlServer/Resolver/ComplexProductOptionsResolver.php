@@ -30,13 +30,11 @@ class ComplexProductOptionsResolver implements ResolverInterface
             }
         }
         foreach ($value['raw']['optionsV2'] as $option) {
-            if (!empty($productOptionIds) && !isset($productOptionIds[$option['id']])) {
-                continue;
-            }
 
             $values = [];
             foreach ($option['values'] as $value) {
-                if (!empty($productOptionValueId) && !isset($productOptionValueId[$value['id']])) {
+                if (!empty($productOptionIds) && isset($productOptionIds[$option['id']])
+                    && !empty($productOptionValueId) && !isset($productOptionValueId[$value['id']])) {
                     continue;
                 }
                 $values[] = [
